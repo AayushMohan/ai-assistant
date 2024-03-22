@@ -36,7 +36,8 @@ const Recorder = ({ uploadAudio }: { uploadAudio: (blob: Blob) => void }) => {
   };
 
   const startRecording = async () => {
-    if (stream === null || pending || mediaRecorder === null) return;
+    if (stream === null || pending) return;
+    // || mediaRecorder === null
 
     setRecordingStatus("recording");
 
@@ -57,6 +58,19 @@ const Recorder = ({ uploadAudio }: { uploadAudio: (blob: Blob) => void }) => {
     setAudioChunks(localAudioChunks);
   };
 
+  const stopRecording = () => {
+    if (mediaRecorder.current === null || pending) return;
+
+    setRecordingStatus("inactive");
+    mediaRecorder.current.stop();
+    mediaRecorder.current.onstop = () => {
+      const audioBlob = new Blob(audioChunks, { type: mimeType });
+      const audioUrl = URL.createObjectURL(audioBlob);
+      uploadAudio(audioBlob);
+      setAudioChunks([]);
+    };
+  };
+
   return (
     <div className="flex items-center justify-center text-white">
       {!permission && (
@@ -64,13 +78,41 @@ const Recorder = ({ uploadAudio }: { uploadAudio: (blob: Blob) => void }) => {
           Get Microphone
         </button>
       )}
-      <Image
-        src={activeAssistantIcon}
-        alt="Recording"
-        width={350}
-        height={350}
-        priority
-      />
+
+      {pending && (
+        <Image
+          src={activeAssistantIcon}
+          alt="Recording"
+          width={350}
+          height={350}
+          priority
+          className="assistant grayscale"
+        />
+      )}
+
+      {permission && recordingStatus === "inactive" && !pending && (
+        <Image
+          src={notActiveAssistantIcon}
+          alt="Not Recording"
+          width={350}
+          height={350}
+          onClick={startRecording}
+          priority={true}
+          className="assistant cursor-pointer hover:scale-110 transition-all ease-in-out duration-150"
+        />
+      )}
+
+      {recordingStatus === "recording" && (
+        <Image
+          src={activeAssistantIcon}
+          alt="Recording"
+          width={350}
+          height={350}
+          onClick={stopRecording}
+          priority={true}
+          className="assistant cursor-pointer hover:scale-110 transition-all ease-in-out duration-150"
+        />
+      )}
     </div>
   );
 };
