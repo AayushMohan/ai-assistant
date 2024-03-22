@@ -1,9 +1,17 @@
+"use client";
+
 import Messages from "@/components/Messages";
 import Recorder from "@/components/Recorder";
 import { SettingsIcon } from "lucide-react";
 import Image from "next/image";
+import { useRef } from "react";
+import { blob } from "stream/consumers";
 
 export default function Home() {
+  const fileRef = useRef<HTMLInputElement | null>(null);
+  const submitButtonRef = useRef<HTMLButtonElement | null>(null);
+  const uploadAudio = (blob: Blob) => {};
+
   return (
     <main className="bg-black h-screen overflow-y-auto">
       {/* Header */}
@@ -28,8 +36,8 @@ export default function Home() {
         </div>
 
         {/* Hidden Fields */}
-        <input type="file" hidden />
-        <button type="submit" hidden />
+        <input type="file" hidden ref={fileRef} />
+        <button type="submit" hidden ref={submitButtonRef} />
 
         <div className="fixed bottom-0 w-full overflow-hidden bg-black rounded-t-3xl">
           <Recorder />
