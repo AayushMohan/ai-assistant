@@ -1,3 +1,5 @@
+import Messages from "@/components/Messages";
+import Recorder from "@/components/Recorder";
 import { SettingsIcon } from "lucide-react";
 import Image from "next/image";
 
@@ -22,15 +24,15 @@ export default function Home() {
       {/* Form */}
       <form className="flex flex-col bg-black">
         <div className="flex-1 bg-gradient-to-b from-blue-950 to-black">
-          {/* Messages */}
+          <Messages />
         </div>
 
         {/* Hidden Fields */}
-        <input type="file" />
+        <input type="file" hidden />
         <button type="submit" hidden />
 
         <div className="fixed bottom-0 w-full overflow-hidden bg-black rounded-t-3xl">
-          {/* Recorder */}
+          <Recorder />
 
           <div>{/* Voice Synthesizer - output of the assistant voice */}</div>
         </div>
