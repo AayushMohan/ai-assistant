@@ -10,7 +10,24 @@ import { blob } from "stream/consumers";
 export default function Home() {
   const fileRef = useRef<HTMLInputElement | null>(null);
   const submitButtonRef = useRef<HTMLButtonElement | null>(null);
-  const uploadAudio = (blob: Blob) => {};
+
+  const uploadAudio = (blob: Blob) => {
+    const url = URL.createObjectURL(blob);
+
+    const file = new File([blob], "audio.webm", { type: blob.type });
+
+    // Set the file value of the hidden input field
+    if (fileRef.current) {
+      const dataTransfer = new DataTransfer();
+      dataTransfer.items.add(file);
+      fileRef.current.files = dataTransfer.files;
+
+      // Simulate the click & submit the form
+      if (submitButtonRef.current) {
+        submitButtonRef.current.click();
+      }
+    }
+  };
 
   return (
     <main className="bg-black h-screen overflow-y-auto">
@@ -36,11 +53,13 @@ export default function Home() {
         </div>
 
         {/* Hidden Fields */}
-        <input type="file" hidden ref={fileRef} />
+        <input type="file" name="audio" hidden ref={fileRef} />
+
         <button type="submit" hidden ref={submitButtonRef} />
 
         <div className="fixed bottom-0 w-full overflow-hidden bg-black rounded-t-3xl">
-          <Recorder />
+          {/* Recorder */}
+          <Recorder uploadAudio={uploadAudio} />
 
           <div>{/* Voice Synthesizer - output of the assistant voice */}</div>
         </div>
