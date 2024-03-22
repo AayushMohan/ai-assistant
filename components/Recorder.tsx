@@ -4,7 +4,7 @@ import notActiveAssistantIcon from "@/img/notactive.png";
 import { useEffect, useRef, useState } from "react";
 import { useFormStatus } from "react-dom";
 
-type Props = {};
+export const mimeType = "audio/webm";
 
 const Recorder = ({ uploadAudio }: { uploadAudio: (blob: Blob) => void }) => {
   const { pending } = useFormStatus();
@@ -37,6 +37,9 @@ const Recorder = ({ uploadAudio }: { uploadAudio: (blob: Blob) => void }) => {
     if (stream === null || pending) return;
 
     setRecordingStatus("recording");
+
+    // Create a new media recorder instance using the stream
+    const media = new MediaRecorder(stream, { mimeType: mimeType });
   };
 
   return (
