@@ -7,6 +7,7 @@ import { useFormStatus } from "react-dom";
 export const mimeType = "audio/webm";
 
 const Recorder = ({ uploadAudio }: { uploadAudio: (blob: Blob) => void }) => {
+  const mediaRecorder = useRef<MediaRecorder | null>(null);
   const { pending } = useFormStatus();
   const [permission, setPermission] = useState(false);
   const [stream, setStream] = useState<MediaStream | null>(null);
@@ -34,12 +35,13 @@ const Recorder = ({ uploadAudio }: { uploadAudio: (blob: Blob) => void }) => {
   };
 
   const startRecording = async () => {
-    if (stream === null || pending) return;
+    if (stream === null || pending || mediaRecorder === null) return;
 
     setRecordingStatus("recording");
 
     // Create a new media recorder instance using the stream
-    const media = new MediaRecorder(stream, { mimeType: mimeType });
+    const media = new MediaRecorder(stream, { mimeType });
+    mediaRecorder.current = media;
   };
 
   return (
