@@ -12,8 +12,6 @@ export default function Home() {
   const submitButtonRef = useRef<HTMLButtonElement | null>(null);
 
   const uploadAudio = (blob: Blob) => {
-    const url = URL.createObjectURL(blob);
-
     const file = new File([blob], "audio.webm", { type: mimeType });
 
     // Set the file value of the hidden input field
@@ -47,7 +45,7 @@ export default function Home() {
       </header>
 
       {/* Form */}
-      <form className="flex flex-col bg-black">
+      <form action={formAction} className="flex flex-col bg-black">
         <div className="flex-1 bg-gradient-to-b from-blue-950 to-black">
           <Messages />
         </div>
