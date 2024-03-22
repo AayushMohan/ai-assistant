@@ -25,7 +25,13 @@ export default function Home() {
 
         {/* Hidden Fields */}
         <input type="file" />
-        <button type="submit" hidden></button>
+        <button type="submit" hidden />
+
+        <div>
+          {/* Recorder */}
+
+          {/* Voice Synthesizer - output of the assistant voice */}
+        </div>
       </form>
     </main>
   );
