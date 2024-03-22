@@ -12,6 +12,7 @@ const Recorder = ({ uploadAudio }: { uploadAudio: (blob: Blob) => void }) => {
   const [permission, setPermission] = useState(false);
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [recordingStatus, setRecordingStatus] = useState("inactive");
+  const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
 
   useEffect(() => {
     getMicrophonePermission();
@@ -52,6 +53,8 @@ const Recorder = ({ uploadAudio }: { uploadAudio: (blob: Blob) => void }) => {
 
       localAudioChunks.push(event.data);
     };
+
+    setAudioChunks(localAudioChunks);
   };
 
   return (
