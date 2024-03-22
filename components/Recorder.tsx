@@ -1,13 +1,16 @@
 import Image from "next/image";
 import activeAssistantIcon from "@/img/active.gif";
 import notActiveAssistantIcon from "@/img/notactive.png";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useFormStatus } from "react-dom";
 
 type Props = {};
 
 const Recorder = ({ uploadAudio }: { uploadAudio: (blob: Blob) => void }) => {
+  const { pending } = useFormStatus();
   const [permission, setPermission] = useState(false);
   const [stream, setStream] = useState<MediaStream | null>(null);
+  const [recordingStatus, setRecordingStatus] = useState("inactive");
 
   useEffect(() => {
     getMicrophonePermission();
@@ -30,8 +33,19 @@ const Recorder = ({ uploadAudio }: { uploadAudio: (blob: Blob) => void }) => {
     }
   };
 
+  const startRecording = async () => {
+    if (stream === null || pending) return;
+
+    setRecordingStatus("recording");
+  };
+
   return (
     <div className="flex items-center justify-center text-white">
+      {!permission && (
+        <button onClick={getMicrophonePermission} className="">
+          Get Microphone
+        </button>
+      )}
       <Image
         src={activeAssistantIcon}
         alt="Recording"
