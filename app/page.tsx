@@ -5,7 +5,7 @@ import Messages from "@/components/Messages";
 import Recorder, { mimeType } from "@/components/Recorder";
 import { SettingsIcon } from "lucide-react";
 import Image from "next/image";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useFormState } from "react-dom";
 import { blob } from "stream/consumers";
 
@@ -15,10 +15,31 @@ const initialState = {
   id: "",
 };
 
+export type Message = {
+  sender: string;
+  response: string;
+  id: string;
+};
+
 export default function Home() {
   const fileRef = useRef<HTMLInputElement | null>(null);
   const submitButtonRef = useRef<HTMLButtonElement | null>(null);
   const [state, formAction] = useFormState(transcript, initialState);
+  const [messages, setMessages] = useState<Message[]>([]);
+
+  // Responsible for updating the messages when the server action completes
+  useEffect(() => {
+    if (state.response && state.sender) {
+      setMessages((messages) => [
+        {
+          sender: state.sender || "",
+          response: state.response || "",
+          id: state.id || "",
+        },
+        ...messages,
+      ]);
+    }
+  }, [state]);
 
   const uploadAudio = (blob: Blob) => {
     const file = new File([blob], "audio.webm", { type: mimeType });
@@ -54,7 +75,10 @@ export default function Home() {
       </header>
 
       {/* Form */}
-      <form action={formAction} className="flex flex-col bg-black">
+      <form
+        action={formAction as unknown as (formData: FormData) => void}
+        className="flex flex-col bg-black"
+      >
         <div className="flex-1 bg-gradient-to-b from-blue-950 to-black">
           <Messages />
         </div>

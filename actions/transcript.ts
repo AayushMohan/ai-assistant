@@ -5,6 +5,8 @@ import { AzureKeyCredential, ChatRequestMessage, OpenAIClient } from "@azure/ope
 async function transcript(prevState: any, { formData }: { formData: any }) {
  console.log("PREVIOUS STATE", prevState)
 
+ const id = Math.random().toString(36)
+
  if (process.env.AZURE_API_KEY === undefined ||
   process.env.AZURE_ENDPOINT === undefined ||
   process.env.AZURE_DEPLOYMENT_NAME === undefined ||
@@ -46,6 +48,35 @@ async function transcript(prevState: any, { formData }: { formData: any }) {
 
  console.log(`Transcription: ${result.text}`)
 
+ // --- Get completion from Azure OpenAI Whisper ---
+
+ const messages: ChatRequestMessage[] = [
+  {
+   role: "system",
+   content: "You are a helpful assistant. You will answer questions and reply I can not answer that if you don't know the answer.",
+  },
+  {
+   role: "user",
+   content: result.text,
+  }
+ ]
+
+ const completions = await client.getChatCompletions(
+  process.env.AZURE_DEPLOYMENT_COMPLETIONS_NAME,
+  messages,
+  { maxTokens: 128 }
+ )
+
+ const response = completions.choices[0].message?.content;
+
+ console.log(prevState.sender, "+++", result.text)
+
+ return {
+  sender: result.text,
+  response: response,
+  id,
+ }
 }
+
 
 export default transcript
